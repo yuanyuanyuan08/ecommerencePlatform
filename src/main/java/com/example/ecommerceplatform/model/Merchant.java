@@ -3,6 +3,7 @@ package com.example.ecommerceplatform.model;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // Merchant.java
 public class Merchant extends User {
@@ -64,8 +65,9 @@ public class Merchant extends User {
         return products;
     }
 
-    public Order getOrders() {
-        return null;
+    public List<Order> getOrders() {
+
+        return this.orders;
     }
 
     public String getAddress() {
@@ -74,9 +76,13 @@ public class Merchant extends User {
 
     public void updateMerchantInfo(String newShopname, String newPhone, String newLocation) {
 
+
         System.out.println("update Info");
 
         // merchant 修改信息
+        this.setShopname(newShopname);
+        this.setPhone(newPhone);
+        this.setAddress(newLocation);
 
     }
 
@@ -88,7 +94,7 @@ public class Merchant extends User {
     }
 
 
-    public static Merchant setMerchant(String phone){ // 查找数据库，返回Merchant对象 如果数据库中没有对应用户，就注册新用户
+    public static Merchant getMerchantByPhone(String phone){ // 查找数据库，返回Merchant对象 如果数据库中没有对应用户，就注册新用户
 
         ResultSet resultSet = getMerchantInfoByPhone(phone);
         //数据库返回的数据 填入 merchant对象
@@ -111,9 +117,9 @@ public class Merchant extends User {
                 merchant.setProducts(productList);
 
                 List<Order> orderList = new ArrayList<>();
-                orderList.add(new Order("01", "01", "01","fish1", 1, false));
-                orderList.add(new Order("01", "01", "01", "fish1",1, false));
-                orderList.add(new Order("01", "01", "01", "fish1",1, false));
+                orderList.add(new Order("01", "01", "01","fish1", 1,10.2, "Hong Kong",true,5.0,"01"));
+                orderList.add(new Order("01", "01", "01", "fish1",2,10.2, "Hong Kong",false,-1,"01"));
+                orderList.add(new Order("01", "01", "01", "fish1",3,10.2, "Hong Kong",false,-1,"01"));
                 merchant.setOrders(orderList);
 
             }
@@ -134,6 +140,13 @@ public class Merchant extends User {
     public void addNewProduct(String name, String price, String stock, String tags) {
         //
         System.out.println("add new product");
-        this.products.add(new Product(name, Double.valueOf(price), Integer.valueOf(stock), this.getId(), tags));
+        this.products.add(Product.addNewProduct(name, Double.valueOf(price), Integer.valueOf(stock), this.getId(), tags));
     }
+
+    public String getScore() {
+        String score = "";//计算店铺得分
+        return "Score: "+score;
+    }
+
+
 }

@@ -49,7 +49,7 @@ public class LoginController {
 
 
 
-                Merchant merchant = Merchant.setMerchant(phone);
+                Merchant merchant = Merchant.getMerchantByPhone(phone);
                 if (merchant == null) {
                     System.err.println("商家信息加载失败");
                     return;
@@ -70,10 +70,10 @@ public class LoginController {
                 FXMLLoader loader = new FXMLLoader((getClass().getResource("/view/ConsumerView.fxml")));
                 root = loader.load();
 
-                ResultSet CustomerInfo = User.getIdByPhone(phone, "consumer");
+                //ResultSet CustomerInfo = User.getIdByPhone(phone, "consumer");
 
                 ConsumerController consumerController = loader.getController();
-                consumerController.setConsumer(setConsumer(CustomerInfo));
+                consumerController.setConsumer(Consumer.getCustomerByPhone(phone));
 
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
@@ -89,18 +89,6 @@ public class LoginController {
 
 
 
-
-    public Consumer setConsumer(ResultSet resultSet) {
-        String id = "";
-        Consumer consumer = null;
-        try {
-            id = resultSet.getString(id);
-            consumer = new Consumer(id, "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return consumer;
-    }
 
 
 }

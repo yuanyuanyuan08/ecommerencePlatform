@@ -3,11 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -16,7 +16,7 @@
 <TabPane fx:id="tabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ecommerceplatform.controller.MerchantController">
     <Tab text="主页">
         <VBox>
-         <VBox prefHeight="59.0" prefWidth="720.0">
+         <VBox prefHeight="33.0" prefWidth="720.0">
             <children>
                <HBox alignment="CENTER" prefHeight="29.0" prefWidth="720.0" spacing="10.0">
                   <children>
@@ -32,7 +32,7 @@
                         </font>
                      </Text>
                      <Label fx:id="phone" alignment="CENTER" prefHeight="35.0" text="enter phone" textAlignment="CENTER" />
-                     <Text layoutX="191.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="location:" textAlignment="CENTER" wrappingWidth="55.205079078674316">
+                     <Text layoutX="191.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="location:" textAlignment="CENTER" wrappingWidth="65.6050386428833">
                         <font>
                            <Font size="14.0" />
                         </font>
@@ -46,16 +46,20 @@
                </HBox>
             </children>
          </VBox>
-         <TableView fx:id="productTable" prefHeight="271.0" prefWidth="720.0">
-           <columns>
-             <TableColumn prefWidth="124.79998779296875" text="product name" fx:id="nameColumn"/>
-             <TableColumn prefWidth="102.4000244140625" text="price" fx:id="priceColumn"/>
-               <TableColumn prefWidth="100.79998779296875" text="stock" fx:id="stockColumn"/>
-               <TableColumn prefWidth="163.20001220703125" text="tags" fx:id="tagsColumn"/>
-               <TableColumn fx:id="actionColumn" prefWidth="164.0" text="Action" />
-           </columns>
-         </TableView>
-         <VBox prefWidth="100.0">
+         <ScrollPane hbarPolicy="NEVER" prefHeight="294.0" prefWidth="720.0">
+            <content>
+               <TableView fx:id="productTable" prefHeight="310.0" prefWidth="720.0">
+                 <columns>
+                   <TableColumn fx:id="nameColumn" prefWidth="124.79998779296875" text="product name" />
+                   <TableColumn fx:id="priceColumn" prefWidth="102.4000244140625" text="price" />
+                     <TableColumn fx:id="stockColumn" prefWidth="100.79998779296875" text="stock" />
+                     <TableColumn fx:id="tagsColumn" prefWidth="163.20001220703125" text="tags" />
+                     <TableColumn fx:id="actionColumn" prefWidth="164.0" text="Action" />
+                 </columns>
+               </TableView>
+            </content>
+         </ScrollPane>
+         <VBox prefHeight="48.0" prefWidth="720.0">
             <children>
                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Add product">
                   <font>
@@ -79,17 +83,22 @@
                <Font name="System Bold" size="12.0" />
             </font>
          </Text>
-            <Label text="feedback score:" />
-         <TableView prefHeight="200.0" prefWidth="200.0" fx:id="orderTable">
-           <columns>
-             <TableColumn prefWidth="75.0" text="product" fx:id="orderedProductColumn"/>
-               <TableColumn prefWidth="75.0" text="quantity" fx:id="orderedQuantityColumn"/>
-               <TableColumn prefWidth="75.0" text="address" fx:id="orderedAddressColumn"/>
-               <TableColumn prefWidth="108.0" text="created time" fx:id="orderedCreatedTimeColumn"/>
-               <TableColumn prefWidth="108.0" text="ended time" fx:id="orderedEndedTimeColumn"/>
-               <TableColumn prefWidth="108.0" text="status" fx:id="orderedStatusColumn"/>
-           </columns>
-         </TableView>
+            <Label fx:id="merchantScoreLabel" text="feedback score:" />
+         <ScrollPane hbarPolicy="NEVER" prefHeight="313.0" prefWidth="720.0" vbarPolicy="ALWAYS">
+            <content>
+               <TableView fx:id="orderTable" prefHeight="311.0" prefWidth="710.0">
+                 <columns>
+                   <TableColumn fx:id="orderedProductColumn" prefWidth="75.0" text="product" />
+                     <TableColumn fx:id="orderedQuantityColumn" prefWidth="75.0" text="quantity" />
+                     <TableColumn fx:id="orderedAddressColumn" prefWidth="75.0" text="address" />
+                     <TableColumn fx:id="orderedCreatedTimeColumn" prefWidth="108.0" text="created time" />
+                     <TableColumn fx:id="orderedEndedTimeColumn" prefWidth="108.0" text="ended time" />
+                     <TableColumn fx:id="orderedFeedbackColumn" prefWidth="108.0" text="feedback score" />
+                     <TableColumn fx:id="orderedStatusColumn" prefWidth="108.0" text="action" />
+                 </columns>
+               </TableView>
+            </content>
+         </ScrollPane>
 
         </VBox>
     </Tab>
