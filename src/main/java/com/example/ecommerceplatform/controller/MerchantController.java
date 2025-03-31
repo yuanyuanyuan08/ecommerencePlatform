@@ -11,14 +11,12 @@ import com.example.ecommerceplatform.model.Merchant;
 import com.example.ecommerceplatform.model.Order;
 import com.example.ecommerceplatform.model.Product;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 // MerchantController.java
 public class MerchantController {
@@ -34,6 +32,8 @@ public class MerchantController {
     public TableColumn orderedCreatedTimeColumn;
     public TableColumn orderedEndedTimeColumn;
     public TableColumn orderedStatusColumn;
+    public TableColumn orderedFeedbackColumn;
+    public Label merchantScoreLabel;
 
 
     private Merchant merchant;
@@ -116,47 +116,56 @@ public class MerchantController {
         orderedCreatedTimeColumn.setCellValueFactory(new PropertyValueFactory<Order, String>("createdDate"));
 
 
-        // 设置Action列的按钮
+        // endDate
         orderedEndedTimeColumn = (TableColumn) orderTable.getColumns().get(4);
         orderedEndedTimeColumn.setCellValueFactory(new PropertyValueFactory<Order,String>("endDate"));
+        // feedback
+        orderedFeedbackColumn = (TableColumn) orderTable.getColumns().get(5);
+        orderedFeedbackColumn.setCellValueFactory(new PropertyValueFactory<Order,String>("feedback"));
 
         //
-        orderedStatusColumn = (TableColumn) orderTable.getColumns().get(5);
+        orderedStatusColumn = (TableColumn) orderTable.getColumns().get(6);
         orderedStatusColumn.setCellFactory(createShippedButton());
 
 
     }
 
 
-    private Callback<TableColumn<Order,Boolean>,TableCell<Order,Boolean>> createShippedButton(){
-        return param -> new TableCell<>(){
+    private Callback<TableColumn<Order, Void>, TableCell<Order, Void>> createShippedButton() {
+        return param -> new TableCell<Order, Void>() {
             private final HBox container = new HBox();
             private final Button shippedBtn = new Button("Shipped");
+
             {
                 container.setSpacing(5);
-                container.getChildren().add(shippedBtn);
+                container.getChildren().add(shippedBtn); // 添加按钮到容器
 
                 shippedBtn.setOnAction(event -> {
-                    Order order = (Order) getTableView().getItems().get(getIndex());
-                    order.setIsShipped(true);
-                    //updateOrderData();
-                    System.out.println("Order : " + order.getOrderId());
+                    Order order = getTableView().getItems().get(getIndex());
+                    // 处理修改逻辑
+                    System.out.println("Modified order: " + order.getOrderId());
                 });
+
 
             }
 
             @Override
-            protected void updateItem(Boolean isShipped, boolean empty) {
-                super.updateItem(isShipped, empty);
-                if (empty || isShipped == null||isShipped==true) {
-                    setGraphic(empty ? null : container);
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
 
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Order order = getTableView().getItems().get(getIndex());
+                    if (order.getIsShipped()) {
+                        setGraphic(null);  // 如果已发货，不显示按钮
+                    } else {
+                        setGraphic(container);  // 如果未发货，显示按钮
+                    }
                 }
-
             }
         };
     }
-
     private Callback<TableColumn, TableCell> createButtonCellFactory() {
         return param -> new TableCell() {
             private final HBox container = new HBox();
@@ -212,6 +221,9 @@ public class MerchantController {
         if (!merchant.getAddress().isEmpty()) {
             address.setText(merchant.getAddress());
         }
+        if (!merchant.getScore().isEmpty()){
+            merchantScoreLabel.setText(merchant.getScore());
+        }
     }
 
 
@@ -226,14 +238,14 @@ public class MerchantController {
     private void handleAddProduct(ActionEvent event) {
 
         // 添加商品
-        Product product = new Product("", 0, 0, merchant.getId(), "");
+        //Product product = new Product("", 0, 0, merchant.getId(), "");
         Dialog dialog = new Dialog();
         dialog.setTitle("Modify Info");
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.getDialogPane().setContent(createNewProductInfoForm());
         dialog.show();
-        merchant.getProducts().add(product);
-        updateProductTable();
+        //merchant.getProducts().add(product);
+
             //System.out.println("Modified product: " + product.getName());
 
     }
@@ -248,7 +260,7 @@ public class MerchantController {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.getDialogPane().setContent(createInfoForm(shopname.getText(),phone.getText(),address.getText()));
         dialog.show();
-        updateMerchantInfo();
+
     }
     private Node createInfoForm(String shopName, String phone, String address){
         GridPane gridPane = new GridPane();
@@ -268,6 +280,7 @@ public class MerchantController {
             public void handle(ActionEvent actionEvent) {
                 merchant.updateMerchantInfo(newShopName.getText(), newPhone.getText(), newAddress.getText());
                 ((Stage) (((Button) actionEvent.getSource()).getScene().getWindow())).close();
+                updateMerchantInfo();
             }
         });
 
@@ -315,8 +328,8 @@ public class MerchantController {
         gridPane.add(new Label("stock: "), 0, 2);
         gridPane.add(new Label("tags: "), 0, 3);
         gridPane.add(newProductName, 1, 0);
-        gridPane.add(newProductPrice, 1, 2);
-        gridPane.add(newProductStock, 1, 1);
+        gridPane.add(newProductPrice, 1, 1);
+        gridPane.add(newProductStock, 1, 2);
         gridPane.add(newProductTags, 1, 3);
         Button button = new Button("Add");
         gridPane.add(button, 0, 4);
@@ -325,6 +338,7 @@ public class MerchantController {
             public void handle(ActionEvent actionEvent) {
                 merchant.addNewProduct(newProductName.getText(), newProductPrice.getText(),newProductStock.getText(), newProductTags.getText());
                 ((Stage) (((Button) actionEvent.getSource()).getScene().getWindow())).close();
+                updateProductTable();
             }
         });
 
