@@ -13,31 +13,36 @@ import javafx.scene.control.*;
 import com.example.ecommerceplatform.model.Consumer;
 import com.example.ecommerceplatform.model.Order;
 import com.example.ecommerceplatform.model.Product;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 // ConsumerController.java
 public class ConsumerController {
     public TextField searchField;
-    public TableColumn orderId;
+
     public TableView historyOrderTable;
-    public TableColumn productName;
-    public TableColumn vendorName;
-    public TableColumn quantity;
-    public TableColumn totalPrice;
-    public TableColumn status;
-    public TableColumn action;
+
 
     public Label consumerAddress;
     public Label consumerPhone;
     public Label consumerName;
+    public TableColumn orderIdColumn;
+    public TableColumn productNameColumn;
+    public TableColumn merchantIdColumn;
+    public TableColumn quantityColumn;
+    public TableColumn totalPriceColumn;
+    public TableColumn statusColumn;
+    public TableColumn actionColumn;
 
     @FXML
     private Label consumerInfoLabel;
@@ -48,16 +53,104 @@ public class ConsumerController {
     private Consumer consumer;
 
     public void setConsumer(Consumer consumer) {
-        this.consumer = consumer;
+        this.consumer = consumer; //获得当前消费者对象
         updateConsumerInfo();
         updateProductList("");
         updateCartList();
         updateOrderHistory();
     }
-    //display info
+    
+    public void initialize(){
+        //初始化历史订单表格
+        orderIdColumn = (TableColumn) historyOrderTable.getColumns().get(0);
+        orderIdColumn.setCellValueFactory(new PropertyValueFactory<Order, String>("orderGroupId"));
+
+        productNameColumn = (TableColumn) historyOrderTable.getColumns().get(1);
+        productNameColumn.setCellValueFactory(new PropertyValueFactory<Order, String>("productName"));
+
+        merchantIdColumn= (TableColumn) historyOrderTable.getColumns().get(2);
+        merchantIdColumn.setCellValueFactory(new PropertyValueFactory<Order, String>("merchantId"));
+
+        quantityColumn = (TableColumn) historyOrderTable.getColumns().get(3);
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<Order, Number>("quantity"));
+
+        totalPriceColumn = (TableColumn) historyOrderTable.getColumns().get(4);
+        totalPriceColumn.setCellValueFactory(new PropertyValueFactory<Order, Number>("price"));
+
+        statusColumn = (TableColumn) historyOrderTable.getColumns().get(5);
+        statusColumn.setCellValueFactory(new PropertyValueFactory<Order, String>("isShipped"));
+
+        actionColumn = (TableColumn) historyOrderTable.getColumns().get(6);
+        actionColumn.setCellFactory(createButtonFactory());
+
+
+
+    }
+
+    private Callback<TableColumn<Order,Void>, TableCell<Order,Void>> createButtonFactory() {
+        return param -> new TableCell<Order, Void>() {
+            private final HBox container1 = new HBox();
+            List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+            private final ComboBox feedbackBtn = new ComboBox(FXCollections.observableArrayList(list));
+            private final Text text = new Text("Feedback: ");
+
+
+            private  final  HBox container2 = new HBox();
+            private final Text feedbackText = new Text();
+
+            private final HBox container3 = new HBox();
+            private final Button cancelOrderBtn = new Button("Cancel Order");
+            {
+                container2.setSpacing(5);
+                container2.getChildren().add(feedbackText);
+
+                container1.setSpacing(5);
+                container1.getChildren().addAll(text,feedbackBtn); // 添加按钮到容器
+
+
+                feedbackBtn.setOnAction(event -> {
+                    Order order = (Order) historyOrderTable.getItems().get(getIndex());
+                    //Call a method to determine which item in the list the user has selected
+                    consumer.giveOrderFeedback(feedbackBtn.getValue().toString(),order); //Send the selected item to the method
+                    historyOrderTable.refresh();
+                });
+
+                container3.setSpacing(5);
+                container3.getChildren().add(cancelOrderBtn);
+                cancelOrderBtn.setOnAction(actionEvent -> {
+                    Order order = (Order) historyOrderTable.getItems().get(getIndex());
+                    consumer.cancelOrder(order);
+                    updateOrderHistory();
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Order order = getTableView().getItems().get(getIndex());
+                    if (order.getIsShipped()&& order.getFeedback().equals("Empty")) {// 如果已发货, 且评分为空,则评分
+                        setGraphic(container1);
+                    } else if(order.getIsShipped()&&!order.getFeedback().equals("Empty")){//　如果已发货且有评分，则展示评分
+                        feedbackText.setText(order.getFeedback());
+                        setGraphic(container2);  // 如果未发货显示"Empty"，feedback score
+                    }
+                    else {//如果未发货则，可以取消发货
+                        setGraphic(container3);
+
+                    }
+                }
+            }
+        };
+
+    }
 
 
     private void updateConsumerInfo() {
+        //更新消费者信息
         if (!consumer.getName().isEmpty()) {
             consumerName.setText(consumer.getName());
         }
@@ -69,14 +162,15 @@ public class ConsumerController {
         }
     }
 
-    private void updateProductList(String search) {
-        // 获取所有商家的商品并显示
-        List<Product> productList = Product.getProductListBySearch(search);//根据搜索获得商品列表
+    private void updateProductList(String searchStr) {
+        // 根据searchStr查找所有产品，当seachStr为空时，展示所有商品。
+        List<Product> productList = consumer.getProductListBySearch(searchStr);//根据搜索获得商品列表
         productListView.getItems().addAll(productList);
         productListView.setCellFactory(lv -> new ProductListCell());
     }
 
     private void updateCartList() {
+        //更新购物车
         Map<Product, Integer> cart = consumer.getCart();
 
         ObservableList<Map.Entry<Product, Integer>> cartEntries =
@@ -86,14 +180,23 @@ public class ConsumerController {
     }
 
     private void updateOrderHistory() {
-        orderHistoryListView.getItems().setAll(consumer.getOrders());
+        //更新历史订单（未完成）
+        //orderHistoryListView.getItems().setAll(consumer.getOrders());
+        ObservableList<Order> data = FXCollections.observableArrayList();
+        data.addAll(consumer.getOrders());
+        //double feedback = data.stream().filter(ele->!ele.getIsShipped()||ele.getFeedback().isNaN()).forEach();
+        historyOrderTable.setItems(data);
     }
+
 
     @FXML
     private void handlePurchase(ActionEvent event) {
         Map<Product, Integer> cart = consumer.getCart();
         // 处理购买逻辑
-        consumer.createOrder(cart);
+        consumer.createOrder();
+        updateCartList();
+        updateOrderHistory();
+
     }
 
     public void handleSearchProduct(ActionEvent actionEvent) {

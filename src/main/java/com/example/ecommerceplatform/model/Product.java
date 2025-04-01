@@ -17,8 +17,9 @@ public class Product {
         this.merchantId = merchantId;
         this.tags = tags;
     }
-    public static Product addNewProduct(String name, double price, int stock, String merchantId, String tags){
-        Product product = new Product(name, price, stock, merchantId, tags);
+    public static Product addNewProduct(String name, double price, int stock, String merchantId, String tag1,String tag2,String tag3){
+        String tag = tag1 + "," + tag2 + "," + tag3; //没有判空
+        Product product = new Product(name, price, stock, merchantId, tag);
         //插入表？
         return product;
     }
@@ -50,10 +51,19 @@ public class Product {
         return stock;
     }
 
+    public String getTag(Integer i) {
+        String[] tag = tags.split(",");
+        if (i <= tag.length && i > 0) {
+            return tag[i - 1];
+        }
+        return "";
+    }
+    // Getters and Setters
+
+
     public String getTags() {
         return tags;
     }
-    // Getters and Setters
 
     public static  List<Product> getProductListBySearch(String search){
         if (search.isEmpty()) {

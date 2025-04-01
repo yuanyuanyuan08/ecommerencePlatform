@@ -7,11 +7,13 @@ public class Order {
     private String orderId;
     private String consumerId;
     private String merchantId;
+
+
     private String productName;
     private String productId;
 
     private Integer quantity;
-    private Double price;
+    private Double price; //单价还是总价？
     private String orderGroupId;
     private String address;
     private String createdDate;
@@ -36,6 +38,10 @@ public class Order {
 
     // Getters and Setters
 
+
+    public String getOrderGroupId() {
+        return orderGroupId;
+    }
 
     public Double getPrice() {
         return price;
@@ -86,6 +92,10 @@ public class Order {
 
     public void setIsShipped(boolean b) {
         this.isShipped = b;
+    }
+
+    public void setFeedback(Double feedback) {
+        this.feedback = feedback;
     }
 
     public void setQuantity(int quantity) {

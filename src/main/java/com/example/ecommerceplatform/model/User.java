@@ -20,6 +20,7 @@ public class User {
     }
 
     public static ResultSet getIdByPhone(String phone, String table){
+        //
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectionDB = connectNow.getConnection();
         String connectQuery = "select * from "+table+" where phone=\""+ phone+"\"";
@@ -27,9 +28,9 @@ public class User {
         try{
             Statement statement = connectionDB.createStatement();
             ResultSet queryOutput = statement.executeQuery(connectQuery);
+            //为空则插入新用户 id: phone:
+
             return queryOutput;
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

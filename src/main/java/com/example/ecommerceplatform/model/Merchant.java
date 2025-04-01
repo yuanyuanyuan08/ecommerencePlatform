@@ -7,18 +7,19 @@ import java.util.Optional;
 
 // Merchant.java
 public class Merchant extends User {
-    private String address;
-    private String phone;
-    private String shopname;
+    private String address; //地址
+    private String phone;//手机号
+    private String shopname;//商店名
 
-    private List<Product> products;
-    private List<Order> orders;
-
-
+    private List<Product> products;//商品信息列表
+    private List<Order> orders;//订单信息列表
 
 
 
-    public Merchant(String id, String phone) { // 根据需要修改
+
+
+    public Merchant(String id, String phone) {
+        //构造函数
         super(id, "Merchant");
         this.address = "";
         this.phone = phone;
@@ -131,21 +132,30 @@ public class Merchant extends User {
 
     public void deleteProductItem(Product product) {
         //删除对应商品信息，this.products和数据库都要删除
+        this.products.remove(product);
     }
 
-    public void modifyProductInfo(String name, String price, String stock, String tags) {
+    public void modifyProductInfo(String name, String price, String stock, String tag1,String tag2,String tag3,Product product) {
+        //修改商品Product 的 name price stock tags，需要联表
         System.out.println("Modify Product");
     }
 
-    public void addNewProduct(String name, String price, String stock, String tags) {
-        //
+    public void addNewProduct(String name, String price, String stock, String tag1,String tag2,String tag3) {
+        //添加新商品，需要联表
         System.out.println("add new product");
-        this.products.add(Product.addNewProduct(name, Double.valueOf(price), Integer.valueOf(stock), this.getId(), tags));
+        this.products.add(Product.addNewProduct(name, Double.valueOf(price), Integer.valueOf(stock), this.getId(), tag1,tag2,tag3));
     }
 
     public String getScore() {
+        //根据历史订单的评分计算平均分
         String score = "";//计算店铺得分
         return "Score: "+score;
+    }
+    public void shipOrder(Order order){
+//        this.orders.remove(order);
+        order.setIsShipped(true);
+//        this.orders.add()
+        //联表修改订单信息
     }
 
 

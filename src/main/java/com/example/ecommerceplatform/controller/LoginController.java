@@ -50,7 +50,7 @@ public class LoginController {
 
 
                 Merchant merchant = Merchant.getMerchantByPhone(phone);
-                if (merchant == null) {
+                if (merchant == null) { // 不能为空
                     System.err.println("商家信息加载失败");
                     return;
                 }
