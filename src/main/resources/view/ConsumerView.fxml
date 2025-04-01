@@ -118,15 +118,15 @@
                  <content>
                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="176.0" prefWidth="600.0">
                         <children>
-                           <TableView fx:id="historyOrderTable" prefHeight="174.0" prefWidth="582.0">
+                           <TableView fx:id="historyOrderTable" prefHeight="174.0" prefWidth="600.0">
                              <columns>
-                               <TableColumn fx:id="orderId" prefWidth="75.0" text="orderId" />
-                               <TableColumn fx:id="productName" prefWidth="96.79998779296875" text="product name" />
-                                 <TableColumn fx:id="vendorName" prefWidth="96.79998779296875" text="vendor name" />
-                                 <TableColumn fx:id="quantity" prefWidth="65.60003662109375" text="quantity" />
-                                 <TableColumn fx:id="totalPrice" prefWidth="64.0" text="amount" />
-                                 <TableColumn fx:id="status" prefWidth="71.20001220703125" text="status" />
-                                 <TableColumn fx:id="action" prefWidth="71.20001220703125" text="action" />
+                               <TableColumn fx:id="orderIdColumn" prefWidth="90.39999085664749" text="orderGroupId" />
+                               <TableColumn fx:id="productNameColumn" prefWidth="65.5999755859375" text="product" />
+                                 <TableColumn fx:id="merchantIdColumn" prefWidth="93.60003662109375" text="vendor name" />
+                                 <TableColumn fx:id="quantityColumn" prefWidth="62.40003967285156" text="quantity" />
+                                 <TableColumn fx:id="totalPriceColumn" prefWidth="60.0" text="amount" />
+                                 <TableColumn fx:id="statusColumn" prefWidth="71.199951171875" text="isShipped" />
+                                 <TableColumn fx:id="actionColumn" prefWidth="143.20001220703125" text="action" />
                              </columns>
                            </TableView>
                         </children>

@@ -142,6 +142,9 @@ public class MerchantController {
 
                 shippedBtn.setOnAction(event -> {
                     Order order = getTableView().getItems().get(getIndex());
+                    //设置为已发货
+                    merchant.shipOrder(order);
+                    orderTable.refresh();
                     // 处理修改逻辑
                     System.out.println("Modified order: " + order.getOrderId());
                 });
@@ -183,8 +186,9 @@ public class MerchantController {
                     dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
                     dialog.getDialogPane().setContent(createProductInfoForm(product));
                     dialog.show();
-                    productTable.getItems().removeAll();
-                    productTable.getItems().addAll(merchant.getProducts());
+//                    productTable.getItems().removeAll();
+//                    productTable.getItems().addAll(merchant.getProducts());
+
 
 
                     System.out.println("Modified product: " + product.getName());
@@ -193,7 +197,8 @@ public class MerchantController {
                 deleteBtn.setOnAction(event -> {
                     Product product = (Product) getTableView().getItems().get(getIndex());
                     merchant.deleteProductItem(product);
-                    productTable.getItems().remove(product);
+                    productTable.refresh();
+//                    productTable.getItems().remove(product);
                     System.out.println("Deleted product: " + product.getName());
                 });
             }
@@ -292,23 +297,31 @@ public class MerchantController {
         GridPane gridPane = new GridPane();
         TextField newProductName = new TextField(product.getName());
         TextField newProductStock = new TextField(String.valueOf(product.getStock()));
-        TextField newProductTags = new TextField(product.getTags());
+        TextField newProductTag1 = new TextField(product.getTag(1));
+        TextField newProductTag2 = new TextField(product.getTag(2));
+        TextField newProductTag3 = new TextField(product.getTag(3));
         TextField newProductPrice = new TextField(String.valueOf(product.getPrice()));
         gridPane.add(new Label("product name: "), 0, 0);
         gridPane.add(new Label("price: "), 0, 1);
         gridPane.add(new Label("stock: "), 0, 2);
-        gridPane.add(new Label("tags: "), 0, 3);
+        gridPane.add(new Label("tag1: "), 0, 3);
+        gridPane.add(new Label("tag2: "), 0, 4);
+        gridPane.add(new Label("tag3: "), 0, 5);
         gridPane.add(newProductName, 1, 0);
         gridPane.add(newProductStock, 1, 1);
         gridPane.add(newProductPrice, 1, 2);
-        gridPane.add(newProductTags, 1, 3);
+        gridPane.add(newProductTag1, 1, 3);
+        gridPane.add(newProductTag2, 1, 4);
+        gridPane.add(newProductTag3, 1, 5);
         Button button = new Button("Modify");
-        gridPane.add(button, 0, 4);
+        gridPane.add(button, 0, 6);
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                merchant.modifyProductInfo(newProductName.getText(), newProductPrice.getText(),newProductStock.getText(), newProductTags.getText());
+                merchant.modifyProductInfo(newProductName.getText(), newProductPrice.getText(),newProductStock.getText(), newProductTag1.getText(),newProductTag2.getText(),newProductTag3.getText(),product);
                 ((Stage) (((Button) actionEvent.getSource()).getScene().getWindow())).close();
+                productTable.refresh();
+
             }
         });
 
@@ -321,24 +334,30 @@ public class MerchantController {
         GridPane gridPane = new GridPane();
         TextField newProductName = new TextField();
         TextField newProductStock = new TextField();
-        TextField newProductTags = new TextField();
+        TextField newProductTag1 = new TextField();
+        TextField newProductTag2 = new TextField();
+        TextField newProductTag3 = new TextField();
         TextField newProductPrice = new TextField();
         gridPane.add(new Label("product name: "), 0, 0);
         gridPane.add(new Label("price: "), 0, 1);
         gridPane.add(new Label("stock: "), 0, 2);
-        gridPane.add(new Label("tags: "), 0, 3);
+        gridPane.add(new Label("tag1: "), 0, 3);
+        gridPane.add(new Label("tag2: "), 0, 4);
+        gridPane.add(new Label("tag3: "), 0, 5);
         gridPane.add(newProductName, 1, 0);
         gridPane.add(newProductPrice, 1, 1);
         gridPane.add(newProductStock, 1, 2);
-        gridPane.add(newProductTags, 1, 3);
+        gridPane.add(newProductTag1, 1, 3);
+        gridPane.add(newProductTag2, 1, 4);
+        gridPane.add(newProductTag3, 1, 5);
         Button button = new Button("Add");
-        gridPane.add(button, 0, 4);
+        gridPane.add(button, 0, 6);
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                merchant.addNewProduct(newProductName.getText(), newProductPrice.getText(),newProductStock.getText(), newProductTags.getText());
+                merchant.addNewProduct(newProductName.getText(), newProductPrice.getText(),newProductStock.getText(), newProductTag1.getText(),newProductTag2.getText(),newProductTag3.getText());
                 ((Stage) (((Button) actionEvent.getSource()).getScene().getWindow())).close();
-                updateProductTable();
+                productTable.refresh();
             }
         });
 
