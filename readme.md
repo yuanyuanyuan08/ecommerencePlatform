@@ -5,7 +5,7 @@
 1. Login page
    - Merchant SearchMerchantById(String phone)
    - Consumer SearchConsumerById(String phone)
-   - ![img.png](login.png)
+   - ![img.png](img.png)
 2. MerchantView:(确定Merchant 类中的各个getter类是否返回正确信息)
    tab1:主页
       - merchant.updateMerchantInfo(String shopname,String phone, String address)
